@@ -2,7 +2,5 @@
 
 ## Logger
 
-## Migrations
-
 ## Prometheus metrics
 
