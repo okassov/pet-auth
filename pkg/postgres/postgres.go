@@ -26,11 +26,17 @@ type Postgres struct {
 	Pool    *pgxpool.Pool
 }
 
-func New(url string) (*Postgres, error) {
+func New(url string, opts ...Option) (*Postgres, error) {
+
 	pg := &Postgres{
 		maxPoolSize:  _defaultMaxPoolSize,
 		connAttempts: _defaultConnAttempts,
 		connTimeout:  _defaultConnTimeout,
+	}
+
+	// Custom options
+	for _, opt := range opts {
+		opt(pg)
 	}
 
 	pg.Builder = squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar)

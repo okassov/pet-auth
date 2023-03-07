@@ -13,11 +13,14 @@ type ServerConfig struct {
 }
 
 type PGConfig struct {
-	PGUrl      string `mapstructure:"PG_URL"`
-	PGPort     string `mapstructure:"PG_PORT"`
-	PGUser     string `mapstructure:"PG_USER"`
-	PGPassword string `mapstructure:"PG_PASSWORD"`
-	PGDatabase string `mapstructure:"PG_DATABASE"`
+	PGUrl          string `mapstructure:"PG_URL"`
+	PGPort         string `mapstructure:"PG_PORT"`
+	PGUser         string `mapstructure:"PG_USER"`
+	PGPassword     string `mapstructure:"PG_PASSWORD"`
+	PGDatabase     string `mapstructure:"PG_DATABASE"`
+	PGMaxPool      int    `mapstructure:"PG_MAX_POOL"`
+	PGConnAttempts int    `mapstructure:"PG_CONN_ATTEMPTS"`
+	PGConnTimeout  int    `mapstructure:"PG_CONN_TIMEOUT"`
 }
 
 type JWTConfig struct {

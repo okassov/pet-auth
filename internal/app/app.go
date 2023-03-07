@@ -31,7 +31,12 @@ func Run() {
 		config.PG.PGPort,
 		config.PG.PGDatabase)
 
-	pg, err := postgres.New(pgConnString)
+	pg, err := postgres.New(
+		pgConnString,
+		postgres.MaxPoolSize(config.PG.PGMaxPool),
+		postgres.ConnAttempts(config.PG.PGConnAttempts),
+		postgres.ConnTimeout(time.Duration(config.PG.PGConnTimeout)),
+	)
 	if err != nil {
 		fmt.Errorf("app - Run - postgres.New: %w", err)
 	}
