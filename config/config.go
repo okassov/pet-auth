@@ -3,8 +3,13 @@ package config
 import "github.com/spf13/viper"
 
 type Config struct {
-	PG  PGConfig  `mapstructure:",squash"`
-	JWT JWTConfig `mapstructure:",squash"`
+	PG     PGConfig     `mapstructure:",squash"`
+	JWT    JWTConfig    `mapstructure:",squash"`
+	Server ServerConfig `mapstructure:",squash"`
+}
+
+type ServerConfig struct {
+	Port string `mapstructure:"SERVER_PORT"`
 }
 
 type PGConfig struct {

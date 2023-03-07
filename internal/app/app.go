@@ -46,9 +46,12 @@ func Run() {
 
 	handler := gin.New()
 
+	// Router
 	v1.NewRouter(handler, authUseCase)
 
-	httpServer := httpserver.New(handler)
+	// Server
+	serverPort := fmt.Sprintf(":%s", config.Server.Port)
+	httpServer := httpserver.New(handler, serverPort)
 
 	// Shutdown
 	err = httpServer.Shutdown()
