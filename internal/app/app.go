@@ -55,8 +55,7 @@ func Run() {
 	v1.NewRouter(handler, authUseCase)
 
 	// Server
-	serverPort := fmt.Sprintf(":%s", config.Server.Port)
-	httpServer := httpserver.New(handler, serverPort)
+	httpServer := httpserver.New(handler, httpserver.Port(config.Server.Port))
 
 	// Shutdown
 	err = httpServer.Shutdown()
