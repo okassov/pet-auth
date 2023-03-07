@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/okassov/internal/app"
+	"github.com/okassov/pet-auth/internal/app"
 )
 
 func main() {

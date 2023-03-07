@@ -14,7 +14,8 @@ const (
 )
 
 type Server struct {
-	server *http.Server
+	server          *http.Server
+	shutdownTimeout time.Duration
 }
 
 func New(handler http.Handler) *Server {
@@ -27,13 +28,18 @@ func New(handler http.Handler) *Server {
 	}
 
 	s := &Server{
-		server: httpServer,
+		server:          httpServer,
+		shutdownTimeout: _defaultShutdownTimeout,
 	}
 
 	s.server.ListenAndServe()
 
+	return s
 }
 
-func (s *Server) Shutdown(ctx context.Context) error {
+func (s *Server) Shutdown() error {
+	ctx, cancel := context.WithTimeout(context.Background(), s.shutdownTimeout)
+	defer cancel()
+
 	return s.server.Shutdown(ctx)
 }

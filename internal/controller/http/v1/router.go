@@ -9,6 +9,9 @@ import (
 
 func NewRouter(handler *gin.Engine, a usecase.Auth) {
 
+	authMiddleware := NewAuthMiddleware(a)
+	// api := router.Group("/api", authMiddleware)
+
 	// Options
 	handler.Use(gin.Logger())
 	handler.Use(gin.Recovery())
@@ -21,4 +24,13 @@ func NewRouter(handler *gin.Engine, a usecase.Auth) {
 	{
 		newAuthRoutes(h, a)
 	}
+	t := handler.Group("/test", authMiddleware)
+	{
+		t.GET("ping", testPing)
+	}
+
+}
+
+func testPing(c *gin.Context) {
+	c.Status(http.StatusOK)
 }
