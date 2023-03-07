@@ -10,7 +10,6 @@ import (
 func NewRouter(handler *gin.Engine, a usecase.Auth) {
 
 	authMiddleware := NewAuthMiddleware(a)
-	// api := router.Group("/api", authMiddleware)
 
 	// Options
 	handler.Use(gin.Logger())

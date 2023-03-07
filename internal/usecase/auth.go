@@ -42,7 +42,6 @@ func (uc *AuthUseCase) SignUp(ctx context.Context, u entity.User) error {
 
 	err := uc.repo.CreateUser(ctx, user)
 	if err != nil {
-		// fmt.Errorf("%w", err)
 		return err
 	}
 
@@ -62,7 +61,6 @@ func (uc *AuthUseCase) SignIn(ctx context.Context, u entity.User) (string, error
 
 	getUser, err := uc.repo.GetUser(ctx, user)
 	if err != nil {
-		// fmt.Errorf("%w", err)
 		return "", err
 	}
 

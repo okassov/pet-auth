@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -68,7 +67,7 @@ func (r *authRoutes) SignIn(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 	}
 
-	user, err := r.a.SignIn(
+	_, err := r.a.SignIn(
 		c.Request.Context(),
 		entity.User{
 			Name:     inp.Name,
@@ -81,8 +80,6 @@ func (r *authRoutes) SignIn(c *gin.Context) {
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 	}
-
-	fmt.Println(user)
 
 	c.JSON(http.StatusOK, "{ message: User login success }")
 }

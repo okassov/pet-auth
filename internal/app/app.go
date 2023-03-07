@@ -2,9 +2,11 @@ package app
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/okassov/pet-auth/config"
 	v1 "github.com/okassov/pet-auth/internal/controller/http/v1"
 	"github.com/okassov/pet-auth/internal/usecase"
 	"github.com/okassov/pet-auth/internal/usecase/repository"
@@ -12,14 +14,24 @@ import (
 	"github.com/okassov/pet-auth/pkg/postgres"
 )
 
-var pg_url = "postgres://auth:auth@localhost:5432/auth"
-var signing_key = "signing_key"
-var token_ttl = 86400
-
 func Run() {
 
+	// Init Config
+	config, err := config.LoadConfig(".")
+	if err != nil {
+		log.Fatal("Cannot load config: ", err)
+	}
+
 	// Repository
-	pg, err := postgres.New(pg_url)
+	pgConnString := fmt.Sprintf(
+		"postgres://%s:%s@%s:%s/%s",
+		config.PG.PGUser,
+		config.PG.PGPassword,
+		config.PG.PGUrl,
+		config.PG.PGPort,
+		config.PG.PGDatabase)
+
+	pg, err := postgres.New(pgConnString)
 	if err != nil {
 		fmt.Errorf("app - Run - postgres.New: %w", err)
 	}
@@ -28,8 +40,8 @@ func Run() {
 	// Use case
 	authUseCase := usecase.New(
 		repository.New(pg),
-		[]byte(signing_key),
-		time.Duration(token_ttl),
+		[]byte(config.JWT.JWTKey),
+		time.Duration(config.JWT.JWTTtl),
 	)
 
 	handler := gin.New()

@@ -9,7 +9,6 @@ import (
 )
 
 type User struct {
-	// ID       int    `json:"id"`
 	Name     string `json:"name"`
 	Username string `json:"username"`
 	Email    string `json:"password"`
@@ -42,7 +41,6 @@ func (r *UserRepo) CreateUser(ctx context.Context, a entity.User) error {
 
 	if err != nil {
 		return err
-		// return fmt.Errorf("UserRepo - Create - r.Pool.Exec: %w", err)
 	}
 
 	return nil
@@ -67,19 +65,22 @@ func (r *UserRepo) GetUser(ctx context.Context, a entity.User) (*entity.User, er
 	var email string
 	var password_hash string
 
-	row := r.Pool.QueryRow(ctx, query, args...) //.Scan(&id)
-	// values := row.Values()
+	row := r.Pool.QueryRow(ctx, query, args...)
+
 	err = row.Scan(&id, &name, &username, &email, &password_hash)
 	if err != nil {
 		return nil, fmt.Errorf("User not registered")
 	}
 
-	return toModel(&User{Name: name, Username: username, Email: email, Password: password_hash}), nil
+	return toModel(&User{
+		Name:     name,
+		Username: username,
+		Email:    email,
+		Password: password_hash}), nil
 }
 
 func toModel(u *User) *entity.User {
 	return &entity.User{
-		// ID:       u.ID.Hex(),
 		Name:     u.Name,
 		Username: u.Username,
 		Email:    u.Email,
