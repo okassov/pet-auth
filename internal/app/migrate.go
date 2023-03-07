@@ -62,6 +62,7 @@ func init() {
 
 	for attempts > 0 {
 		m, err = migrate.New("file://migrations", databaseConnString)
+
 		if err == nil {
 			break
 		}
