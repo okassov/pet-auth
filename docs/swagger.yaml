@@ -1,0 +1,79 @@
+basePath: /v1
+definitions:
+  v1.SignInResponse:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+    type: object
+  v1.SignUpResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  v1.response:
+    properties:
+      error:
+        example: message
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Using a authentication service
+  title: Pet Auth Service
+  version: "1.0"
+paths:
+  /auth/register:
+    get:
+      consumes:
+      - application/json
+      description: Register User
+      operationId: SignUp
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.SignUpResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+      summary: Sign UP
+      tags:
+      - auth
+  /auth/token:
+    post:
+      consumes:
+      - application/json
+      description: Authorized User and return token
+      operationId: SignIn
+      parameters:
+      - description: Generate Tokens
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.SignInResponse'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.SignInResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+      summary: Sign In
+      tags:
+      - auth
+swagger: "2.0"

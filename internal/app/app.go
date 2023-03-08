@@ -11,6 +11,7 @@ import (
 	"github.com/okassov/pet-auth/internal/usecase"
 	"github.com/okassov/pet-auth/internal/usecase/repository"
 	"github.com/okassov/pet-auth/pkg/httpserver"
+	"github.com/okassov/pet-auth/pkg/logger"
 	"github.com/okassov/pet-auth/pkg/postgres"
 )
 
@@ -21,6 +22,9 @@ func Run() {
 	if err != nil {
 		log.Fatal("Cannot load config: ", err)
 	}
+
+	// Init Logger
+	l := logger.New()
 
 	// Repository
 	pgConnString := fmt.Sprintf(
@@ -38,7 +42,7 @@ func Run() {
 		postgres.ConnTimeout(time.Duration(config.PG.PGConnTimeout)),
 	)
 	if err != nil {
-		fmt.Errorf("app - Run - postgres.New: %w", err)
+		l.Error("app - Run - postgres.New: %w", err)
 	}
 	defer pg.Close()
 
@@ -52,7 +56,7 @@ func Run() {
 	handler := gin.New()
 
 	// Router
-	v1.NewRouter(handler, authUseCase)
+	v1.NewRouter(handler, authUseCase, l)
 
 	// Server
 	httpServer := httpserver.New(handler, httpserver.Port(config.Server.Port))
@@ -60,6 +64,6 @@ func Run() {
 	// Shutdown
 	err = httpServer.Shutdown()
 	if err != nil {
-		fmt.Println("Error server start")
+		l.Error("app - Run - httpServer.Shutdown", err)
 	}
 }

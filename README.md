@@ -1,9 +1,5 @@
 # TODO
 
-## Logger
-
-## Swagger
-
 ## Prometheus metrics
 
 ## Tracing
@@ -17,4 +13,14 @@
 
 ```
 docker build -t okassov/pet-auth:v1 .
+```
+
+# Swagger Init
+
+Install Doc - https://github.com/swaggo/swag#declarative-comments-format
+
+```
+swag init -g internal/controller/http/v1/router.go
+go run cmd/main.go
+curl http://localhost:8080/swagger/index.html
 ```

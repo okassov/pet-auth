@@ -5,15 +5,31 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/okassov/pet-auth/internal/usecase"
+	"github.com/okassov/pet-auth/pkg/logger"
+
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+
+	// Swagger docs.
+	_ "github.com/okassov/pet-auth/docs"
 )
 
-func NewRouter(handler *gin.Engine, a usecase.Auth) {
+//	@title			Pet Auth Service
+//	@description	Using a authentication service
+//	@version		1.0
+//	@host			localhost:8080
+//	@BasePath		/v1
+func NewRouter(handler *gin.Engine, a usecase.Auth, l logger.LoggerInterface) {
 
-	authMiddleware := NewAuthMiddleware(a)
+	// authMiddleware := NewAuthMiddleware(a)
 
 	// Options
 	handler.Use(gin.Logger())
 	handler.Use(gin.Recovery())
+
+	// Swagger
+	swaggerHandler := ginSwagger.DisablingWrapHandler(swaggerFiles.Handler, "DISABLE_SWAGGER_HTTP_HANDLER")
+	handler.GET("/swagger/*any", swaggerHandler)
 
 	// Healthcheck endpoint
 	handler.GET("/healthz", func(c *gin.Context) { c.Status(http.StatusOK) })
@@ -21,12 +37,12 @@ func NewRouter(handler *gin.Engine, a usecase.Auth) {
 	// Routers
 	h := handler.Group("/v1")
 	{
-		newAuthRoutes(h, a)
+		newAuthRoutes(h, a, l)
 	}
-	s := handler.Group("/secured", authMiddleware)
-	{
-		s.GET("ping", Ping)
-	}
+	// s := handler.Group("/secured", authMiddleware)
+	// {
+	// 	s.GET("ping", Ping)
+	// }
 
 }
 

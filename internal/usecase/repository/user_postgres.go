@@ -46,7 +46,6 @@ func (r *UserRepo) GetUser(ctx context.Context, a entity.User) (*entity.User, er
 		ToSql()
 
 	if err != nil {
-		fmt.Println(err)
 		return nil, fmt.Errorf("UserRepo - Get - r.Builder: %w", err)
 	}
 
