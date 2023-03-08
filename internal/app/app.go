@@ -2,7 +2,6 @@ package app
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -15,13 +14,7 @@ import (
 	"github.com/okassov/pet-auth/pkg/postgres"
 )
 
-func Run() {
-
-	// Init Config
-	config, err := config.LoadConfig(".")
-	if err != nil {
-		log.Fatal("Cannot load config: ", err)
-	}
+func Run(config config.Config) {
 
 	// Init Logger
 	l := logger.New()
