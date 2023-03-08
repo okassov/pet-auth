@@ -50,48 +50,6 @@ func (m *AuthMiddleware) Handle(c *gin.Context) {
 }
 
 // Define custom middleware that skips the OpenTelemetry middleware for support routes
-// func SkipOTLPMiddleware(c *gin.Context) {
-// 	if c.Request.URL.Path == "/metrics" {
-// 		c.Next()
-// 		return
-// 	}
-// 	// } else if c.FullPath() == "/healthz" {
-// 	// 	c.Next()
-// 	// 	// return
-// 	// } else if c.FullPath() == "/swagger/*any" {
-// 	// 	c.Next()
-// 	// 	// return
-// 	// } else {
-// 	// 	return
-// 	// }
-// 	otelgin.Middleware(os.Getenv("OTEL_SERVICE_NAME"))(c)
-// }
-
-// func SkipOTLPMiddleware() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		fmt.Println(c.Request.URL.Path)
-// 		if c.Request.URL.Path == "/metrics" {
-// 			c.Next()
-// 			return
-// 		}
-// 		if c.Request.URL.Path == "/healthz" {
-// 			c.Next()
-// 			return
-// 		}
-// 		if c.Request.URL.Path == "/secured/ping" {
-// 			c.Next()
-// 			return
-// 		}
-// 		if c.Request.URL.Path == "/swagger/*any" {
-// 			c.Next()
-// 			return
-// 		}
-
-// 		otelgin.Middleware(os.Getenv("OTEL_SERVICE_NAME"))(c)
-// 	}
-// }
-
-// Define custom middleware that skips the OpenTelemetry middleware for support routes
 func SkipOTLPMiddleware(c *gin.Context) {
 
 	skipPaths := []string{
