@@ -2,6 +2,25 @@ version: '3.5'
 
 services:
 
+  # app:
+  #   container_name: app
+  #   image: okassov/pet-auth:v1
+  #   environment:
+  #     PG_USER: "auth"
+  #     PG_PASSWORD: "auth"
+  #     PG_URL: "postgres"
+  #     PG_PORT: "5432"
+  #     PG_DATABASE: "auth"
+  #     PG_MAX_POOL: 1
+  #     PG_CONN_ATTEMPTS: 10
+  #     PG_CONN_TIMEOUT: 1
+  #     JWT_KEY: "signing_key"
+  #     JWT_TTL: "3600"
+  #     SERVER_PORT: "8080"
+  #     GIN_MODE: "debug"
+  #   ports:
+  #     - "8080:8080"
+
   postgres:
     container_name: postgres
     image: postgres:14
