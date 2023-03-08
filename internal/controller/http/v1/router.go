@@ -21,7 +21,7 @@ import (
 //	@BasePath		/v1
 func NewRouter(handler *gin.Engine, a usecase.Auth, l logger.LoggerInterface) {
 
-	// authMiddleware := NewAuthMiddleware(a)
+	authMiddleware := NewAuthMiddleware(a)
 
 	// Options
 	handler.Use(gin.Logger())
@@ -39,10 +39,10 @@ func NewRouter(handler *gin.Engine, a usecase.Auth, l logger.LoggerInterface) {
 	{
 		newAuthRoutes(h, a, l)
 	}
-	// s := handler.Group("/secured", authMiddleware)
-	// {
-	// 	s.GET("ping", Ping)
-	// }
+	s := handler.Group("/secured", authMiddleware)
+	{
+		s.GET("ping", Ping)
+	}
 
 }
 
