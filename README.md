@@ -2,7 +2,6 @@
 
 ## Tracing
   - Рефактор кода
-  - Заюзать otelgin.Filter для фильтрации эндпоинтов
 
 ## Security
 

@@ -28,6 +28,12 @@ func NewRouter(handler *gin.Engine, a usecase.Auth, l logger.LoggerInterface) {
 	handler.Use(gin.Logger())
 	handler.Use(gin.Recovery())
 
+	// Add OTLP Middleware
+	// handler.Use(otelgin.Middleware(os.Getenv("OTEL_SERVICE_NAME")))
+
+	// Remove OTLP Middleware from some routes
+	handler.Use(SkipOTLPMiddleware)
+
 	// Swagger
 	swaggerHandler := ginSwagger.DisablingWrapHandler(swaggerFiles.Handler, "DISABLE_SWAGGER_HTTP_HANDLER")
 	handler.GET("/swagger/*any", swaggerHandler)
@@ -36,7 +42,7 @@ func NewRouter(handler *gin.Engine, a usecase.Auth, l logger.LoggerInterface) {
 	handler.GET("/healthz", func(c *gin.Context) { c.Status(http.StatusOK) })
 
 	// Prometheus metrics
-	handler.GET("/metrics", gin.WrapH(promhttp.Handler()))
+	handler.GET("/metrics", func(c *gin.Context) { promhttp.Handler().ServeHTTP(c.Writer, c.Request) })
 
 	// Routers
 	h := handler.Group("/v1")

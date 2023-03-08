@@ -15,7 +15,6 @@ import (
 	"github.com/okassov/pet-auth/pkg/logger"
 	"github.com/okassov/pet-auth/pkg/postgres"
 	"github.com/okassov/pet-auth/pkg/tracer"
-	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 )
 
 func Run(config config.Config) {
@@ -69,8 +68,6 @@ func Run(config config.Config) {
 	)
 
 	handler := gin.New()
-	handler.Use(otelgin.Middleware(os.Getenv("OTEL_SERVICE_NAME")))
-	// handler.Use(otelgin.Filter())
 
 	// Router
 	v1.NewRouter(handler, authUseCase, l)
