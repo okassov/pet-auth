@@ -1,7 +1,5 @@
 # TODO
 
-## Prometheus metrics
-
 ## Tracing
 
 ## Security

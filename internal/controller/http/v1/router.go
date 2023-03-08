@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/okassov/pet-auth/internal/usecase"
 	"github.com/okassov/pet-auth/pkg/logger"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -33,6 +34,9 @@ func NewRouter(handler *gin.Engine, a usecase.Auth, l logger.LoggerInterface) {
 
 	// Healthcheck endpoint
 	handler.GET("/healthz", func(c *gin.Context) { c.Status(http.StatusOK) })
+
+	// Prometheus metrics
+	handler.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
 	// Routers
 	h := handler.Group("/v1")
