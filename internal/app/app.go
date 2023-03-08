@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -35,10 +36,22 @@ func Run(config config.Config) {
 	if !ok {
 		log.Fatal("Cannot find OTEL_SERVICE_NAME environment variable.")
 	}
-	err = tracer.NewTracerProvider(f)
+	// err = tracer.NewTracerProvider(f)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	ctx := context.Background()
+	// Registers a tracer Provider globally.
+	shutdown, err := tracer.InstallExportPipeline(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer func() {
+		if err := shutdown(ctx); err != nil {
+			log.Fatal(err)
+		}
+	}()
 
 	// Repository
 	pgConnString := fmt.Sprintf(

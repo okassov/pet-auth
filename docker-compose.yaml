@@ -33,6 +33,53 @@ services:
     ports:
       - "5432:5432"
 
+
+  # Telemetry Components
+  grafana:
+    image: grafana/grafana:9.1.0
+    container_name: grafana
+    deploy:
+      resources:
+        limits:
+          memory: 75M
+    volumes:
+      - ./infrastructure-test/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./infrastructure-test/grafana/provisioning/:/etc/grafana/provisioning/
+    ports:
+      - 3000:3000
+
+  otelcol:
+    image: otel/opentelemetry-collector-contrib:0.70.0
+    container_name: otel-col
+    deploy:
+      resources:
+        limits:
+          memory: 125M
+    restart: unless-stopped
+    command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
+    volumes:
+      - ./infrastructure-test/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
+      - ./infrastructure-test/otelcollector/otelcol-config-extras.yml:/etc/otelcol-config-extras.yml
+    ports:
+      - "4317"          # OTLP over gRPC receiver
+      - "4318:4318"     # OTLP over HTTP receiver
+      - "9464"          # Prometheus exporter
+      - "8888"          # metrics endpoint
+
+  tempo:
+    image: grafana/tempo:latest
+    container_name: tempo
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./infrastructure-test/tempo/tempo.yaml:/etc/tempo.yaml
+      - ../tempo-data:/tmp/tempo
+    ports:
+      - "14268"  # jaeger ingest
+      - "3200"   # tempo
+      - "4317"  # otlp grpc
+      - "4318"  # otlp http
+      - "9411"   # zipkin
+
 volumes:
   postgres-db:
     driver: local

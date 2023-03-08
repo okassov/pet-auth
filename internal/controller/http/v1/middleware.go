@@ -49,7 +49,7 @@ func (m *AuthMiddleware) Handle(c *gin.Context) {
 
 }
 
-// Define custom middleware that skips the OpenTelemetry middleware for support routes
+// Define custom middleware that skips the OpenTelemetry middleware for infra routes
 func SkipOTLPMiddleware(c *gin.Context) {
 
 	skipPaths := []string{

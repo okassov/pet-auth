@@ -28,7 +28,7 @@ func NewRouter(handler *gin.Engine, a usecase.Auth, l logger.LoggerInterface) {
 	handler.Use(gin.Logger())
 	handler.Use(gin.Recovery())
 
-	// Added/Remove OTLP Middleware from some routes
+	// Added/Skip OTLP Middleware from infra routes
 	handler.Use(SkipOTLPMiddleware)
 
 	// Swagger

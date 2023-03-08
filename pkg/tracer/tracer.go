@@ -1,27 +1,18 @@
 package tracer
 
 import (
-	"io"
+	"context"
+	"fmt"
 	"os"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/sdk/resource"
 	"go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.17.0"
 )
-
-// newExporter returns a console exporter.
-func newExporter(w io.Writer) (trace.SpanExporter, error) {
-	return stdouttrace.New(
-		stdouttrace.WithWriter(w),
-		// Use human readable output.
-		stdouttrace.WithPrettyPrint(),
-		// Do not print timestamps for the demo.
-		stdouttrace.WithoutTimestamps(),
-	)
-}
 
 // newResource returns a resource describing this application.
 func newResource() *resource.Resource {
@@ -37,30 +28,19 @@ func newResource() *resource.Resource {
 	return r
 }
 
-// Init Tracer Provider
-func NewTracerProvider(file io.Writer) error {
-	exp, err := newExporter(file)
+// Init OTEL Exporter
+func InstallExportPipeline(ctx context.Context) (func(context.Context) error, error) {
+	client := otlptracehttp.NewClient()
+	exporter, err := otlptrace.New(ctx, client)
 	if err != nil {
-		return err
+		return nil, fmt.Errorf("creating OTLP trace exporter: %w", err)
 	}
 
-	tp := trace.NewTracerProvider(
-		trace.WithBatcher(exp),
+	tracerProvider := trace.NewTracerProvider(
+		trace.WithBatcher(exporter),
 		trace.WithResource(newResource()),
 	)
+	otel.SetTracerProvider(tracerProvider)
 
-	otel.SetTracerProvider(tp)
-
-	return nil
+	return tracerProvider.Shutdown, nil
 }
-
-// func (tp *TracerProvider) Shutdown() error {
-// 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-// 	defer cancel()
-
-// 	if err := tp.Provider.Shutdown(ctx); err != nil {
-// 		log.Fatal(err)
-// 	}
-
-// 	return tp.Provider.Shutdown(ctx)
-// }
