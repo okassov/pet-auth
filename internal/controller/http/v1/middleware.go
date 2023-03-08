@@ -36,13 +36,14 @@ func (m *AuthMiddleware) Handle(c *gin.Context) {
 		return
 	}
 
-	user, err := m.usecase.ValidateToken(c.Request.Context(), headerParts[1])
+	_, err := m.usecase.ValidateToken(c.Request.Context(), headerParts[1])
 	if err != nil {
+		// fmt.Println(err)
 		status := http.StatusInternalServerError
 		c.AbortWithStatus(status)
 		return
 	}
 
-	c.Set("user", user)
+	// c.Set("user", user)
 
 }

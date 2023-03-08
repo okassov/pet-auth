@@ -8,23 +8,14 @@ import (
 	"github.com/okassov/pet-auth/pkg/postgres"
 )
 
-type User struct {
-	Name     string `json:"name"`
-	Username string `json:"username"`
-	Email    string `json:"password"`
-	Password string `json:"password"`
-}
-
 type UserRepo struct {
 	*postgres.Postgres
 }
 
-// New -.
 func New(pg *postgres.Postgres) *UserRepo {
 	return &UserRepo{pg}
 }
 
-//
 func (r *UserRepo) CreateUser(ctx context.Context, a entity.User) error {
 
 	sql, args, err := r.Builder.
@@ -51,7 +42,7 @@ func (r *UserRepo) GetUser(ctx context.Context, a entity.User) (*entity.User, er
 	query, args, err := r.Builder.
 		Select("*").
 		From("users").
-		Where("username IN (?) AND password_hash IN (?)", a.Username, a.Password).
+		Where("username IN (?) AND email IN (?)", a.Username, a.Email).
 		ToSql()
 
 	if err != nil {
@@ -63,27 +54,27 @@ func (r *UserRepo) GetUser(ctx context.Context, a entity.User) (*entity.User, er
 	var name string
 	var username string
 	var email string
-	var password_hash string
+	var password string
 
 	row := r.Pool.QueryRow(ctx, query, args...)
 
-	err = row.Scan(&id, &name, &username, &email, &password_hash)
+	err = row.Scan(&id, &name, &username, &email, &password)
 	if err != nil {
 		return nil, fmt.Errorf("User not registered")
 	}
 
-	return toModel(&User{
+	// Check password hash
+	if password != a.Password {
+		return nil, fmt.Errorf("Invalid credentials")
+	}
+
+	user := &entity.User{
 		Name:     name,
 		Username: username,
 		Email:    email,
-		Password: password_hash}), nil
-}
-
-func toModel(u *User) *entity.User {
-	return &entity.User{
-		Name:     u.Name,
-		Username: u.Username,
-		Email:    u.Email,
-		Password: u.Password,
+		Password: password,
 	}
+
+	return user, nil
+
 }

@@ -9,8 +9,8 @@ import (
 type (
 	Auth interface {
 		SignUp(context.Context, entity.User) error
-		SignIn(context.Context, entity.User) (string, error)
-		ValidateToken(ctx context.Context, accessToken string) (*entity.User, error)
+		SignIn(context.Context, entity.User) (map[string]string, error)
+		ValidateToken(ctx context.Context, accessToken string) (UserClaim, error)
 	}
 
 	UserRepo interface {

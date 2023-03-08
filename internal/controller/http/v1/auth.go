@@ -8,6 +8,13 @@ import (
 	"github.com/okassov/pet-auth/internal/usecase"
 )
 
+type SignInput struct {
+	Name     string `json:"name"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
 type authRoutes struct {
 	a usecase.Auth
 }
@@ -18,19 +25,8 @@ func newAuthRoutes(handler *gin.RouterGroup, a usecase.Auth) {
 	h := handler.Group("/auth")
 	{
 		h.POST("register", r.SignUp)
-		h.POST("login", r.SignIn)
+		h.POST("token", r.SignIn)
 	}
-}
-
-func (r *authRoutes) generateToken(c *gin.Context) {
-
-}
-
-type SignInput struct {
-	Name     string `json:"name"`
-	Username string `json:"username"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
 }
 
 func (r *authRoutes) SignUp(c *gin.Context) {
@@ -59,6 +55,11 @@ func (r *authRoutes) SignUp(c *gin.Context) {
 
 }
 
+type SignInResponse struct {
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
+}
+
 func (r *authRoutes) SignIn(c *gin.Context) {
 
 	inp := new(SignInput)
@@ -67,7 +68,7 @@ func (r *authRoutes) SignIn(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 	}
 
-	_, err := r.a.SignIn(
+	tokenPair, err := r.a.SignIn(
 		c.Request.Context(),
 		entity.User{
 			Name:     inp.Name,
@@ -81,5 +82,5 @@ func (r *authRoutes) SignIn(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 	}
 
-	c.JSON(http.StatusOK, "{ message: User login success }")
+	c.JSON(http.StatusOK, tokenPair)
 }

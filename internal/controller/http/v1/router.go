@@ -23,13 +23,13 @@ func NewRouter(handler *gin.Engine, a usecase.Auth) {
 	{
 		newAuthRoutes(h, a)
 	}
-	t := handler.Group("/test", authMiddleware)
+	s := handler.Group("/secured", authMiddleware)
 	{
-		t.GET("ping", testPing)
+		s.GET("ping", Ping)
 	}
 
 }
 
-func testPing(c *gin.Context) {
-	c.Status(http.StatusOK)
+func Ping(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"message": "pong"})
 }
