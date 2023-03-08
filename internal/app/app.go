@@ -2,6 +2,8 @@ package app
 
 import (
 	"fmt"
+	"log"
+	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -12,12 +14,32 @@ import (
 	"github.com/okassov/pet-auth/pkg/httpserver"
 	"github.com/okassov/pet-auth/pkg/logger"
 	"github.com/okassov/pet-auth/pkg/postgres"
+	"github.com/okassov/pet-auth/pkg/tracer"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 )
 
 func Run(config config.Config) {
 
 	// Init Logger
 	l := logger.New()
+
+	// Init TracerProvider
+	// Write telemetry data to a file.
+	f, err := os.Create("traces.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+
+	// Check OTEL_SERVICE_NAME env (required)
+	_, ok := os.LookupEnv("OTEL_SERVICE_NAME")
+	if !ok {
+		log.Fatal("Cannot find OTEL_SERVICE_NAME environment variable.")
+	}
+	err = tracer.NewTracerProvider(f)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// Repository
 	pgConnString := fmt.Sprintf(
@@ -47,6 +69,8 @@ func Run(config config.Config) {
 	)
 
 	handler := gin.New()
+	handler.Use(otelgin.Middleware(os.Getenv("OTEL_SERVICE_NAME")))
+	// handler.Use(otelgin.Filter())
 
 	// Router
 	v1.NewRouter(handler, authUseCase, l)

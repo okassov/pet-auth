@@ -1,6 +1,7 @@
 # TODO
 
 ## Tracing
+  - Рефактор кода
 
 ## Security
 

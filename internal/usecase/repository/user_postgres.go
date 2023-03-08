@@ -3,9 +3,11 @@ package repository
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"github.com/okassov/pet-auth/internal/entity"
 	"github.com/okassov/pet-auth/pkg/postgres"
+	"go.opentelemetry.io/otel"
 )
 
 type UserRepo struct {
@@ -17,6 +19,11 @@ func New(pg *postgres.Postgres) *UserRepo {
 }
 
 func (r *UserRepo) CreateUser(ctx context.Context, a entity.User) error {
+
+	// Tracer
+	tracerName := os.Getenv("OTEL_SERVICE_NAME")
+	_, span := otel.GetTracerProvider().Tracer(tracerName).Start(ctx, "RepositoryCreateUser")
+	defer span.End()
 
 	sql, args, err := r.Builder.
 		Insert("users").
@@ -38,6 +45,11 @@ func (r *UserRepo) CreateUser(ctx context.Context, a entity.User) error {
 }
 
 func (r *UserRepo) GetUser(ctx context.Context, a entity.User) (*entity.User, error) {
+
+	// Tracer
+	tracerName := os.Getenv("OTEL_SERVICE_NAME")
+	_, span := otel.GetTracerProvider().Tracer(tracerName).Start(ctx, "RepositoryGetUser")
+	defer span.End()
 
 	query, args, err := r.Builder.
 		Select("*").

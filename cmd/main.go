@@ -7,6 +7,8 @@ import (
 	"github.com/okassov/pet-auth/internal/app"
 )
 
+var TracerName = "fib"
+
 func main() {
 
 	// Init Config
